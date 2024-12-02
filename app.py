@@ -12,11 +12,16 @@ import streamlit as st
 import os
 import time
 
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
 if not os.path.exists('files'):
     os.mkdir('files')
 
-if not os.path.exists('jj'):
-    os.mkdir('jj')
+if not os.path.exists('data'):
+    os.mkdir('data')
 
 if 'template' not in st.session_state:
     st.session_state.template = """You are a knowledgeable chatbot, here to help with questions of the user. Your tone should be professional and informative.
@@ -37,13 +42,13 @@ if 'memory' not in st.session_state:
         return_messages=True,
         input_key="question")
 if 'vectorstore' not in st.session_state:
-    st.session_state.vectorstore = Chroma(persist_directory='jj',
-                                          embedding_function=OllamaEmbeddings(base_url='http://192.168.123.110:12434',
-                                                                              model="qwen2:7b")
-                                          )
+    st.session_state.vectorstore = Chroma(persist_directory='data',
+                                          embedding_function=OllamaEmbeddings(base_url=os.environ.get("URL"),
+                                                                              model=os.environ.get("MODEL"),
+                                          ))
 if 'llm' not in st.session_state:
-    st.session_state.llm = Ollama(base_url='http://192.168.123.110:12434',
-                                  model="qwen2:7b",
+    st.session_state.llm = Ollama(base_url=os.environ.get("URL"),
+                                  model=os.environ.get("MODEL"),
                                   verbose=True,
                                   callback_manager=CallbackManager(
                                       [StreamingStdOutCallbackHandler()]),

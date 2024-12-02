@@ -1,4 +1,6 @@
 files
-jj
+pan
 __pycache__
 .venv
+.env
+.vscode
